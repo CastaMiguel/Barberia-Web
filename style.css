@@ -1,0 +1,421 @@
+/* ==========================================================================
+   VARIABLES DE DISEÑO: PALETA IMPERIAL LUXURY
+   ========================================================================== */
+:root {
+    /* Modo Claro Vintage Premium */
+    --bg-primary: #FDFBF7;       /* Fondo crema sutil, estilo barbería clásica */
+    --bg-secondary: #F5F2EB;     /* Contraste suave para el body */
+    --card-bg: #FFFFFF;          /* Fondo blanco puro para tarjetas */
+    --text-primary: #1C1A17;     /* Marrón oscuro/negro orgánico */
+    --text-secondary: #6B665F;   /* Gris cálido tipográfico */
+    --accent: #A88754;           /* Oro Viejo / Bronce */
+    --accent-hover: #8C6D40;     /* Oro atenuado al pasar el cursor */
+    --border: #E8E2D5;           /* Líneas sutiles cremas */
+    --shadow: 0 4px 10px -1px rgba(168, 135, 84, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --toast-success: #10B981;
+    --toast-error: #EF4444;
+}
+
+[data-theme="dark"] {
+    /* Modo Oscuro Premium Elite */
+    --bg-primary: #121212;       /* Negro grafito mate */
+    --bg-secondary: #181818;     /* Fondo de la app general */
+    --card-bg: #1F1F1F;          /* Superficie de tarjetas y tablas */
+    --text-primary: #F4F4F6;     /* Blanco suavizado de alta gama */
+    --text-secondary: #9A9A9F;   /* Gris platino descriptor */
+    --accent: #C5A880;           /* Oro Champagne brillante */
+    --accent-hover: #A38760;     /* Variación de oro oscuro */
+    --border: rgba(197, 168, 128, 0.18); /* Bordes oscuros con destello dorado sutil */
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================================================
+   RESET & ESTILOS GLOBALES
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: 0.5px;
+}
+
+nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+nav a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+}
+
+nav a:hover {
+    background-color: var(--bg-secondary);
+    color: var(--accent);
+}
+
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background-color: var(--bg-secondary);
+}
+
+main {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ==========================================================================
+   COMPONENTES ATÓMICOS (BOTONES & FORMULARIOS)
+   ========================================================================== */
+.btn {
+    background-color: var(--accent);
+    color: #121212 !important; /* Forzar legibilidad: texto oscuro sobre fondo oro */
+    border: 1px solid var(--accent);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: transparent;
+    color: var(--accent) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+/* Estado activo del botón "Solo hoy" (Dashboard Fix) */
+.btn-active {
+    background-color: var(--text-primary) !important;
+    color: var(--card-bg) !important;
+    border-color: var(--text-primary) !important;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    border-radius: 0.375rem;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.2);
+}
+
+/* ==========================================================================
+   BOTÓN SECUNDARIO (ACCESO PERSONAL) - FIX MODO OSCURO
+   ========================================================================== */
+.btn-secondary {
+    background-color: transparent;
+    color: var(--text-primary); /* Usa el color de texto adaptativo de la app */
+    border: 1px solid var(--accent); /* Borde dorado elegante */
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--accent);
+    color: #121212 !important; /* Se vuelve dorado con letras oscuras al pasar el mouse */
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+/* Forzar visibilidad perfecta en el modo oscuro */
+[data-theme="dark"] .btn-secondary {
+    color: var(--accent); /* En modo oscuro, el texto se ilumina en dorado */
+    border-color: rgba(197, 168, 128, 0.4); /* Borde un poco más visible */
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    color: #121212 !important;
+    background-color: var(--accent);
+}
+
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS DEL INDEX (VISTA PÚBLICA)
+   ========================================================================== */
+.hero-section {
+    padding: 5rem 1rem;
+    text-align: center;
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--bg-secondary) 100%);
+    border-radius: 1rem;
+    margin-bottom: 3rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.hero-badge {
+    display: inline-block;
+    background-color: rgba(197, 168, 128, 0.15);
+    color: var(--accent);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    position: relative;
+    padding-bottom: 0.75rem;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: var(--accent);
+    border-radius: 2px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.feature-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow);
+    border-color: var(--accent);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.info-footer-box {
+    background-color: var(--card-bg);
+    border-top: 3px solid var(--accent);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 2rem;
+    box-shadow: var(--shadow);
+    text-align: center;
+}
+
+.info-item h4 {
+    color: var(--accent);
+    margin-bottom: 0.25rem;
+}
+
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS DEL DASHBOARD (VISTA INTERNA)
+   ========================================================================== */
+.grid-cards { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+    gap: 1rem; 
+    margin-bottom: 2rem; 
+}
+
+.card { 
+    background-color: var(--card-bg); 
+    border: 1px solid var(--border); 
+    padding: 1rem; 
+    border-radius: 0.5rem; 
+    text-align: center; 
+    box-shadow: var(--shadow); 
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+}
+
+.card h3 { 
+    font-size: 0.875rem; 
+    color: var(--text-secondary); 
+    margin-bottom: 0.5rem; 
+}
+
+.card p { 
+    font-size: 1.75rem; 
+    font-weight: bold; 
+    color: var(--accent); 
+}
+
+.filter-section { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+    gap: 1rem; 
+    margin-bottom: 1.5rem; 
+    background: var(--card-bg); 
+    padding: 1rem; 
+    border-radius: 0.375rem; 
+    border: 1px solid var(--border); 
+}
+
+/* Tablas Administrativas */
+table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    background-color: var(--card-bg); 
+    margin-top: 1rem; 
+    box-shadow: var(--shadow); 
+}
+
+th, td { 
+    padding: 0.75rem; 
+    border: 1px solid var(--border); 
+    text-align: left; 
+    vertical-align: middle; 
+}
+
+th { 
+    background-color: var(--bg-secondary); 
+    font-weight: bold; 
+    color: var(--text-primary);
+}
+
+/* Badges de Estados */
+.badge { 
+    padding: 0.25rem 0.5rem; 
+    border-radius: 0.25rem; 
+    font-size: 0.75rem; 
+    font-weight: bold; 
+    border: none; 
+    cursor: pointer; 
+}
+
+/* Colores de badges suavizados para encajar con el diseño de lujo */
+.Pendiente { background: #FEF3C7; color: #D97706; }
+.Confirmada { background: #D1FAE5; color: #059669; }
+.Cancelada { background: #FEE2E2; color: #DC2626; }
+.Finalizada { background: #E0F2FE; color: #0284C7; }
+
+/* ==========================================================================
+   ANIMACIONES & TOASTS
+   ========================================================================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(0.9); }
+}
+
+.animate-fade {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    padding: 1rem 1.5rem;
+    border-radius: 0.375rem;
+    color: white;
+    font-weight: 500;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+    animation: fadeIn 0.3s ease;
+    min-width: 250px;
+}
+
+.toast.success { background-color: var(--toast-success); }
+.toast.error { background-color: var(--toast-error); }

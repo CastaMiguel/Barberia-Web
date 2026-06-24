@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Técnico - Barbería Imperial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Panel Barbería</div>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="reservas.html">Reservar Cita</a>
+            <a href="dashboard.html" style="color:var(--accent);">Panel Negocio</a>
+            <button id="theme-toggle-btn" class="theme-toggle">Modo Oscuro</button>
+        </nav>
+    </header>
+
+    <main class="animate-fade">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <h2 id="welcome-message">Bienvenido Administrativo</h2>
+            <div style="font-size:0.9rem; color:var(--text-secondary);">Rol: Administrador Principal</div>
+        </div>
+
+        <div class="grid-cards">
+            <div class="card"><h3>Total Registradas</h3><p id="kpi-total">0</p></div>
+            <div class="card"><h3>Pendientes</h3><p id="kpi-pendiente">0</p></div>
+            <div class="card"><h3>Confirmadas</h3><p id="kpi-confirmada">0</p></div>
+            <div class="card"><h3>Canceladas</h3><p id="kpi-cancelada">0</p></div>
+            <div class="card"><h3>Finalizadas</h3><p id="kpi-finalizada">0</p></div>
+            <div class="card"><h3>Citas de Hoy</h3><p id="kpi-hoy">0</p></div>
+        </div>
+
+        <div class="filter-section">
+            <input type="text" id="search-input" class="form-control" placeholder="Buscar por Nombre, Email o Teléfono...">
+            <input type="date" id="filter-fecha" class="form-control">
+            <select id="filter-estado" class="form-control">
+                <option value="">Filtrar por Estado</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Confirmada">Confirmada</option>
+                <option value="Cancelada">Cancelada</option>
+                <option value="Finalizada">Finalizada</option>
+            </select>
+            <select id="filter-servicio" class="form-control">
+                <option value="">Filtrar por Servicio</option>
+                <option value="Corte de Cabello Tradicional">Corte de Cabello Tradicional</option>
+                <option value="Arreglo de Barba y Toalla Caliente">Arreglo de Barba y Toalla Caliente</option>
+                <option value="Combo Imperial (Corte + Barba)">Combo Imperial (Corte + Barba)</option>
+                <option value="Exfoliación Facial">Exfoliación Facial</option>
+            </select>
+            <button id="btn-hoy-filter" class="btn" style="padding:0.5rem; cursor: pointer;">Solo Hoy</button>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Contacto</th>
+                        <th>Fecha / Hora</th>
+                        <th>Servicio</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        let showOnlyToday = false;
+
+        function updateDashboard() {
+            const citas = getCitas();
+            const hoyStr = new Date().toISOString().split('T')[0];
+
+            // Renderizado de KPIs
+            document.getElementById('kpi-total').textContent = citas.length;
+            document.getElementById('kpi-pendiente').textContent = citas.filter(c => c.estado === 'Pendiente').length;
+            document.getElementById('kpi-confirmada').textContent = citas.filter(c => c.estado === 'Confirmada').length;
+            document.getElementById('kpi-cancelada').textContent = citas.filter(c => c.estado === 'Cancelada').length;
+            document.getElementById('kpi-finalizada').textContent = citas.filter(c => c.estado === 'Finalizada').length;
+            
+            const deHoy = citas.filter(c => c.fecha === hoyStr);
+            document.getElementById('kpi-hoy').textContent = deHoy.length;
+
+            // Mensaje Personalizado
+            document.getElementById('welcome-message').textContent = `Bienvenido, Administrador. Hoy tienes ${deHoy.length} citas asignadas.`;
+
+            // Filtrado Dinámico y Renderizado
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
+            const filterFecha = document.getElementById('filter-fecha').value;
+            const filterEstado = document.getElementById('filter-estado').value;
+            const filterServicio = document.getElementById('filter-servicio').value;
+
+            const filtered = citas.filter(c => {
+                const matchSearch = c.nombre.toLowerCase().includes(searchVal) || c.email.toLowerCase().includes(searchVal) || c.telefono.includes(searchVal);
+                const matchFecha = filterFecha ? c.fecha === filterFecha : true;
+                const matchEstado = filterEstado ? c.estado === filterEstado : true;
+                const matchServicio = filterServicio ? c.servicio === filterServicio : true;
+                const matchTodayOnly = showOnlyToday ? c.fecha === hoyStr : true;
+
+                return matchSearch && matchFecha && matchEstado && matchServicio && matchTodayOnly;
+            });
+
+            // Ordenamiento por Fecha y Hora por defecto
+            filtered.sort((a, b) => new Date(a.fecha + 'T' + a.hora) - new Date(b.fecha + 'T' + b.hora));
+
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary);">No se encontraron registros coincidentes.</td></tr>`;
+                return;
+            }
+
+            // ESTRUCTURA DE TABLA REPARADA CON TODAS SUS CELDAS (<td>) CORRECTAS
+            filtered.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.className = 'animate-fade';
+                tr.innerHTML = `
+                    <td>
+                        <strong>${c.nombre}</strong><br>
+                        <small style="color:var(--text-secondary);">${c.observaciones || 'Sin comentarios'}</small>
+                    </td>
+                    <td>
+                        ${c.telefono}<br>
+                        <small>${c.email}</small>
+                    </td>
+                    <td>
+                        ${c.fecha}<br>
+                        <strong>${c.hora}</strong>
+                    </td>
+                    <td>${c.servicio}</td>
+                    <td>
+                        <select onchange="changeStatus('${c.id}', this.value)" class="badge ${c.estado}">
+                            <option value="Pendiente" ${c.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
+                            <option value="Confirmada" ${c.estado === 'Confirmada' ? 'selected' : ''}>Confirmada</option>
+                            <option value="Cancelada" ${c.estado === 'Cancelada' ? 'selected' : ''}>Cancelada</option>
+                            <option value="Finalizada" ${c.estado === 'Finalizada' ? 'selected' : ''}>Finalizada</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button onclick="editAppointment('${c.id}')" class="btn" style="padding:0.25rem 0.5rem; font-size:0.8rem; background-color:#3b82f6;">Editar</button>
+                        <button onclick="deleteAppointment('${c.id}')" class="btn" style="padding:0.25rem 0.5rem; font-size:0.8rem; background-color:var(--toast-error);">Eliminar</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function changeStatus(id, newStatus) {
+            let citas = getCitas();
+            const index = citas.findIndex(c => c.id === id);
+            if(index !== -1) {
+                citas[index].estado = newStatus;
+                saveCitas(citas);
+                showToast("Estado de la cita actualizado.", "success");
+                updateDashboard();
+            }
+        }
+
+        function deleteAppointment(id) {
+            if(confirm("¿Está seguro de que desea eliminar permanentemente esta cita? Esta acción no se puede deshacer.")) {
+                let citas = getCitas();
+                citas = citas.filter(c => c.id !== id);
+                saveCitas(citas);
+                showToast("Cita eliminada del sistema.", "success");
+                updateDashboard();
+            }
+        }
+
+        function editAppointment(id) {
+            let citas = getCitas();
+            const appointment = citas.find(c => c.id === id);
+            if(appointment) {
+                const nuevoNombre = prompt("Modificar Nombre Completo:", appointment.nombre);
+                if (nuevoNombre === null) return; 
+                if (nuevoNombre.trim().length < 3) {
+                    showToast("Edición fallida: El nombre debe tener mínimo 3 caracteres.", "error");
+                    return;
+                }
+                
+                const nuevoTelefono = prompt("Modificar Teléfono:", appointment.telefono);
+                if (!/^\d+$/.test(nuevoTelefono)) {
+                    showToast("Edición fallida: Teléfono inválido.", "error");
+                    return;
+                }
+
+                appointment.nombre = nuevoNombre.trim();
+                appointment.telefono = nuevoTelefono.trim();
+                saveCitas(citas);
+                showToast("Cita actualizada de forma exitosa.", "success");
+                updateDashboard();
+            }
+        }
+
+        // Listeners de los filtros en tiempo real
+        document.getElementById('search-input').addEventListener('input', updateDashboard);
+        document.getElementById('filter-fecha').addEventListener('change', updateDashboard);
+        document.getElementById('filter-estado').addEventListener('change', updateDashboard);
+        document.getElementById('filter-servicio').addEventListener('change', updateDashboard);
+        
+        // CORREGIDO: Alterna la clase CSS en lugar de forzar estilos fijos en línea
+        document.getElementById('btn-hoy-filter').addEventListener('click', function() {
+            showOnlyToday = !showOnlyToday;
+            this.classList.toggle('btn-active', showOnlyToday);
+            updateDashboard();
+        });
+
+        // Carga inicial
+        window.onload = updateDashboard;
+    </script>
+</body>
+</html>

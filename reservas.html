@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Cita - Barbería Imperial</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .container-box { background-color: var(--card-bg); border: 1px solid var(--border); padding: 2rem; border-radius: 0.5rem; max-width: 600px; margin: 0 auto; box-shadow: var(--shadow); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Barbería Imperial</div>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="reservas.html" style="color:var(--accent);">Reservar Cita</a>
+            <a href="dashboard.html">Panel Negocio</a>
+            <button id="theme-toggle-btn" class="theme-toggle">Modo Oscuro</button>
+        </nav>
+    </header>
+
+    <main class="animate-fade">
+        <div class="container-box">
+            <h2 style="margin-bottom: 1.5rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem;">Agendar Turno</h2>
+            <form id="appointment-form" novalidate>
+                <div class="form-group">
+                    <label>Nombre Completo *</label>
+                    <input type="text" id="nombre" class="form-control" placeholder="Mínimo 3 letras" required>
+                </div>
+                <div class="form-group">
+                    <label>Número Telefónico *</label>
+                    <input type="tel" id="telefono" class="form-control" placeholder="Solo números" required>
+                </div>
+                <div class="form-group">
+                    <label>Correo Electrónico *</label>
+                    <input type="email" id="email" class="form-control" placeholder="ejemplo@correo.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Fecha *</label>
+                    <input type="date" id="fecha" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Hora de Atención *</label>
+                    <input type="time" id="hora" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Tipo de Servicio *</label>
+                    <select id="servicio" class="form-control" required>
+                        <option value="">Seleccione un servicio</option>
+                        <option value="Corte de Cabello Tradicional">Corte de Cabello Tradicional</option>
+                        <option value="Arreglo de Barba y Toalla Caliente">Arreglo de Barba y Toalla Caliente</option>
+                        <option value="Combo Imperial (Corte + Barba)">Combo Imperial (Corte + Barba)</option>
+                        <option value="Exfoliación Facial">Exfoliación Facial</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Observaciones / Comentarios (Máx. 200 caracteres)</label>
+                    <textarea id="observaciones" class="form-control" rows="3" maxlength="200" placeholder="Detalles adicionales..."></textarea>
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Confirmar Reserva de Turno</button>
+            </form>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+    <script>
+        document.getElementById('appointment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const servicio = document.getElementById('servicio').value;
+            const observaciones = document.getElementById('observaciones').value.trim();
+
+            // 1. Campos Vacíos
+            if (!nombre || !telefono || !email || !fecha || !hora || !servicio) {
+                showToast("Por favor complete todos los campos obligatorios.", "error");
+                return;
+            }
+
+            // 2. Validación de Nombre
+            if (nombre.length < 3) {
+                showToast("El nombre debe tener al menos 3 caracteres.", "error");
+                return;
+            }
+            if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
+                showToast("El nombre solo puede contener letras y espacios.", "error");
+                return;
+            }
+
+            // 3. Validación de Teléfono
+            if (!/^\d+$/.test(telefono)) {
+                showToast("El teléfono debe contener únicamente números.", "error");
+                return;
+            }
+
+            // 4. Validación de Correo
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast("Por favor ingrese un correo electrónico válido.", "error");
+                return;
+            }
+
+            // 5. Validación de Fecha no anterior a hoy
+            const hoy = new Date();
+            hoy.setHours(0,0,0,0);
+            const fechaSeleccionada = new Date(fecha + 'T00:00:00');
+            if (fechaSeleccionada < hoy) {
+                showToast("La fecha de la cita no puede ser anterior al día de hoy.", "error");
+                return;
+            }
+
+            // 6. Validación de Horario (Ej: 08:00 a 20:00)
+            const horaInt = parseInt(hora.split(':')[0]);
+            if (horaInt < 8 || horaInt >= 20) {
+                showToast("El horario permitido de la barbería es de 08:00 AM a 08:00 PM.", "error");
+                return;
+            }
+
+            // Control de duplicados en LocalStorage
+            const citas = getCitas();
+            
+            // Conflicto 1: Cita duplicada exacta en fecha y hora
+            const duplicadoHora = citas.find(c => c.fecha === fecha && c.hora === hora && c.estado !== 'Cancelar');
+            if (duplicadoHora) {
+                showToast("Conflicto de horario: Esa hora ya se encuentra agendada.", "error");
+                return;
+            }
+
+            // Conflicto 2: Mismo cliente a la misma hora
+            const duplicadoCliente = citas.find(c => c.email === email && c.fecha === fecha && c.hora === hora);
+            if (duplicadoCliente) {
+                showToast("Ya posees una cita registrada para este mismo día y hora.", "error");
+                return;
+            }
+
+            // Guardar si supera las validaciones obligatorias y avanzadas
+            if (confirm("¿Está seguro de que desea confirmar la reserva?")) {
+                const nuevaCita = {
+                    id: 'ID-' + Math.floor(Math.random() * 100000),
+                    nombre, telefono, email, fecha, hora, servicio, observaciones,
+                    estado: 'Pendiente'
+                };
+                citas.push(nuevaCita);
+                saveCitas(citas);
+                showToast("¡Cita registrada correctamente!", "success");
+                this.reset();
+            }
+        });
+    </script>
+</body>
+</html>
