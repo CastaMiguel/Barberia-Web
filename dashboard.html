@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Técnico - Barbería Imperial</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* MODAL DE EDICIÓN AVANZADA (Criterio Diseño e Interactividad) */
+        .modal-edit {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-edit-content {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-edit h3 {
+            margin-top: 0;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -82,11 +111,56 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="table-body">
-                    </tbody>
+                <tbody id="table-body"></tbody>
             </table>
         </div>
     </main>
+
+    <div id="modal-edit-appointment" class="modal-edit">
+        <div class="modal-edit-content">
+            <h3>Reprogramar / Editar Cita</h3>
+            <form id="edit-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.3rem; font-size:0.9rem;">Nombre Completo *</label>
+                    <input type="text" id="edit-nombre" class="form-control" style="width:100%;">
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.3rem; font-size:0.9rem;">Teléfono *</label>
+                    <input type="text" id="edit-telefono" class="form-control" style="width:100%;">
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.3rem; font-size:0.9rem;">Correo Electrónico *</label>
+                    <input type="email" id="edit-email" class="form-control" style="width:100%;">
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.3rem; font-size:0.9rem;">Fecha de la Cita *</label>
+                    <input type="date" id="edit-fecha" class="form-control" style="width:100%;">
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.3rem; font-size:0.9rem;">Hora de la Cita *</label>
+                    <input type="time" id="edit-hora" class="form-control" style="width:100%;">
+                </div>
+                <div class="form-group" style="margin-bottom:1rem;">
+                    <label style="display:block; margin-bottom:0.3rem; font-size:0.9rem;">Servicio Solicitado *</label>
+                    <select id="edit-servicio" class="form-control" style="width:100%;">
+                        <option value="Corte de Cabello Tradicional">Corte de Cabello Tradicional</option>
+                        <option value="Arreglo de Barba y Toalla Caliente">Arreglo de Barba y Toalla Caliente</option>
+                        <option value="Combo Imperial (Corte + Barba)">Combo Imperial (Corte + Barba)</option>
+                        <option value="Exfoliación Facial">Exfoliación Facial</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom:1.5rem;">
+                    <label style="display:block; margin-bottom:0.3rem; font-size:0.9rem;">Observaciones (Max 200 car.)</label>
+                    <textarea id="edit-observaciones" class="form-control" style="width:100%; height:60px; resize:none;" maxlength="200"></textarea>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+                    <button type="button" onclick="closeEditModal()" class="btn" style="background-color:var(--text-secondary); padding:0.5rem 1rem;">Cancelar</button>
+                    <button type="submit" class="btn" style="padding:0.5rem 1rem;">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script src="script.js"></script>
     <script>
@@ -97,7 +171,6 @@
             const ahora = new Date();
             const hoyStr = ahora.toISOString().split('T')[0];
 
-            // Renderizado de KPIs
             document.getElementById('kpi-total').textContent = citas.length;
             document.getElementById('kpi-pendiente').textContent = citas.filter(c => c.estado === 'Pendiente').length;
             document.getElementById('kpi-confirmada').textContent = citas.filter(c => c.estado === 'Confirmada').length;
@@ -107,10 +180,8 @@
             const deHoy = citas.filter(c => c.fecha === hoyStr);
             document.getElementById('kpi-hoy').textContent = deHoy.length;
 
-            // Mensaje Personalizado
             document.getElementById('welcome-message').textContent = `Bienvenido, Administrador. Hoy tienes ${deHoy.length} citas asignadas.`;
 
-            // Buscar la "Próxima Cita" activa más cercana en el tiempo
             const proximas = citas
                 .filter(c => c.estado !== 'Cancelada' && c.estado !== 'Finalizada')
                 .filter(c => new Date(c.fecha + 'T' + c.hora) >= ahora)
@@ -123,7 +194,6 @@
                 kpiProxima.textContent = "Ninguna pendiente";
             }
 
-            // Filtrado Dinámico
             const searchVal = document.getElementById('search-input').value.toLowerCase();
             const filterFecha = document.getElementById('filter-fecha').value;
             const filterEstado = document.getElementById('filter-estado').value;
@@ -139,7 +209,6 @@
                 return matchSearch && matchFecha && matchEstado && matchServicio && matchTodayOnly;
             });
 
-            // Ordenamiento Dinámico (Por Fecha/Hora o por Nombre alfabéticamente)
             const sortBy = document.getElementById('sort-by').value;
             if (sortBy === 'nombre') {
                 filtered.sort((a, b) => a.nombre.localeCompare(b.nombre));
@@ -189,7 +258,6 @@
             });
         }
 
-        // Funciones de gestión de estado y edición integradas del código base original
         function changeStatus(id, newStatus) {
             const citas = getCitas();
             const index = citas.findIndex(c => c.id === id);
@@ -211,31 +279,105 @@
             }
         }
 
+        /* LOGICA DE EDICIÓN AVANZADA MEDIANTE FORMULARIO COMPLETO */
         function editAppointment(id) {
             const citas = getCitas();
             const appointment = citas.find(c => c.id === id);
             if (appointment) {
-                const nuevoNombre = prompt("Modificar Nombre Completo:", appointment.nombre);
-                if (!nuevoNombre || nuevoNombre.trim().length < 3 || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nuevoNombre)) {
-                    showToast("Edición fallida: Nombre vacío, muy corto o con caracteres inválidos.", "error");
-                    return;
-                }
+                document.getElementById('edit-id').value = appointment.id;
+                document.getElementById('edit-nombre').value = appointment.nombre;
+                document.getElementById('edit-telefono').value = appointment.telefono;
+                document.getElementById('edit-email').value = appointment.email;
+                document.getElementById('edit-fecha').value = appointment.fecha;
+                document.getElementById('edit-hora').value = appointment.hora;
+                document.getElementById('edit-servicio').value = appointment.servicio;
+                document.getElementById('edit-observaciones').value = appointment.observaciones || '';
                 
-                const nuevoTelefono = prompt("Modificar Teléfono:", appointment.telefono);
-                if (!nuevoTelefono || !/^\d+$/.test(nuevoTelefono)) {
-                    showToast("Edición fallida: Teléfono inválido.", "error");
-                    return;
-                }
-
-                appointment.nombre = nuevoNombre.trim();
-                appointment.telefono = nuevoTelefono.trim();
-                saveCitas(citas);
-                showToast("Cita actualizada de forma exitosa.", "success");
-                updateDashboard();
+                document.getElementById('modal-edit-appointment').style.display = 'flex';
             }
         }
 
-        // Listeners únicos de los filtros en tiempo real
+        function closeEditModal() {
+            document.getElementById('modal-edit-appointment').style.display = 'none';
+        }
+
+        document.getElementById('edit-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('edit-id').value;
+            const nombre = document.getElementById('edit-nombre').value.trim();
+            const telefono = document.getElementById('edit-telefono').value.trim();
+            const email = document.getElementById('edit-email').value.trim();
+            const fecha = document.getElementById('edit-fecha').value;
+            const hora = document.getElementById('edit-hora').value;
+            const servicio = document.getElementById('edit-servicio').value;
+            const observaciones = document.getElementById('edit-observaciones').value.trim();
+
+            // RE-VALIDACIONES ESTRICTAS (Mismo motor de reservas.html)
+            if (!nombre || !telefono || !email || !fecha || !hora || !servicio) {
+                showToast("Error: No se permiten campos obligatorios vacíos.", "error");
+                return;
+            }
+            if (nombre.length < 3 || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
+                showToast("El nombre debe poseer mínimo 3 caracteres (solo letras).", "error");
+                return;
+            }
+            if (!/^\d+$/.test(telefono)) {
+                showToast("El teléfono debe poseer únicamente valores numéricos.", "error");
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast("El correo electrónico ingresado no posee un formato correcto.", "error");
+                return;
+            }
+
+            const ahora = new Date();
+            const hoyStr = ahora.toISOString().split('T')[0];
+            if (fecha < hoyStr) {
+                showToast("La fecha seleccionada no puede ser previa al día actual.", "error");
+                return;
+            }
+
+            if (hora < "08:00" || hora > "20:00") {
+                showToast("Establecimiento cerrado. Horario de atención: 08:00 AM a 08:00 PM.", "error");
+                return;
+            }
+
+            const citas = getCitas();
+            
+            // Validar cruces excluyendo la propia cita actual que se edita
+            const duplicadoHora = citas.find(c => c.id !== id && c.fecha === fecha && c.hora === hora && c.estado !== 'Cancelada');
+            if (duplicadoHora) {
+                showToast("Conflicto de horario: Esa hora ya está ocupada por otro cliente.", "error");
+                return;
+            }
+
+            const duplicadoCliente = citas.find(c => c.id !== id && c.email === email && c.fecha === fecha && c.hora === hora);
+            if (duplicadoCliente) {
+                showToast("Conflicto: Este cliente ya tiene otra cita registrada a esa misma hora.", "error");
+                return;
+            }
+
+            // Solicitar confirmación previa (Criterio 13 Validaciones)
+            if (confirm("¿Está completamente seguro de que desea aplicar y guardar estos cambios en la cita?")) {
+                const index = citas.findIndex(c => c.id === id);
+                if (index !== -1) {
+                    citas[index].nombre = nombre;
+                    citas[index].telefono = telefono;
+                    citas[index].email = email;
+                    citas[index].fecha = fecha;
+                    citas[index].hora = hora;
+                    citas[index].servicio = servicio;
+                    citas[index].observaciones = observaciones;
+
+                    saveCitas(citas);
+                    showToast("Cita editada y reprogramada con éxito.", "success");
+                    closeEditModal();
+                    updateDashboard();
+                }
+            }
+        });
+
         document.getElementById('search-input').addEventListener('input', updateDashboard);
         document.getElementById('filter-fecha').addEventListener('change', updateDashboard);
         document.getElementById('filter-estado').addEventListener('change', updateDashboard);
@@ -248,7 +390,6 @@
             updateDashboard();
         });
 
-        // Carga inicial
         window.onload = updateDashboard;
     </script>
 </body>
