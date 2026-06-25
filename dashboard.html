@@ -18,9 +18,23 @@
     </header>
 
     <main class="animate-fade">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-            <h2 id="welcome-message">Bienvenido Administrativo</h2>
-            <div style="font-size:0.9rem; color:var(--text-secondary);">Rol: Administrador Principal</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; gap: 1rem; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 0.9rem;">
+                <div class="user-avatar-container">
+                    <img src="data:image/jpeg;base64,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" 
+                    alt="Admin Profile" class="user-avatar-img">
+                    <span class="user-online-status"></span>
+                </div>
+                <div>
+                    <h2 id="welcome-message" style="margin: 0;">Bienvenido Administrativo</h2>
+                    <div style="font-size:0.9rem; color:var(--text-secondary);">Rol: Administrador Principal</div>
+                </div>
+            </div>
+            
+            <div class="card" style="padding: 0.5rem 1rem; text-align: left; min-width: 200px;">
+                <h3 style="font-size: 0.75rem; margin-bottom: 0.15rem; text-align: left;">Próxima Cita</h3>
+                <p id="kpi-proxima" style="font-size: 0.95rem; margin: 0; color: var(--text-primary); font-weight: 600;">Ninguna</p>
+            </div>
         </div>
 
         <div class="grid-cards">
@@ -49,14 +63,18 @@
                 <option value="Combo Imperial (Corte + Barba)">Combo Imperial (Corte + Barba)</option>
                 <option value="Exfoliación Facial">Exfoliación Facial</option>
             </select>
+            <select id="sort-by" class="form-control">
+                <option value="fecha-hora">Ordenar por: Fecha y Hora</option>
+                <option value="nombre">Ordenar por: Nombre (A-Z)</option>
+            </select>
             <button id="btn-hoy-filter" class="btn" style="padding:0.5rem; cursor: pointer;">Solo Hoy</button>
         </div>
 
-        <div style="overflow-x: auto;">
+        <div class="table-container" style="margin-top: 1.5rem;">
             <table>
                 <thead>
                     <tr>
-                        <th>Cliente</th>
+                        <th>Cliente / Notas</th>
                         <th>Contacto</th>
                         <th>Fecha / Hora</th>
                         <th>Servicio</th>
@@ -64,7 +82,8 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="table-body"></tbody>
+                <tbody id="table-body">
+                    </tbody>
             </table>
         </div>
     </main>
@@ -75,7 +94,8 @@
 
         function updateDashboard() {
             const citas = getCitas();
-            const hoyStr = new Date().toISOString().split('T')[0];
+            const ahora = new Date();
+            const hoyStr = ahora.toISOString().split('T')[0];
 
             // Renderizado de KPIs
             document.getElementById('kpi-total').textContent = citas.length;
@@ -90,7 +110,20 @@
             // Mensaje Personalizado
             document.getElementById('welcome-message').textContent = `Bienvenido, Administrador. Hoy tienes ${deHoy.length} citas asignadas.`;
 
-            // Filtrado Dinámico y Renderizado
+            // Buscar la "Próxima Cita" activa más cercana en el tiempo
+            const proximas = citas
+                .filter(c => c.estado !== 'Cancelada' && c.estado !== 'Finalizada')
+                .filter(c => new Date(c.fecha + 'T' + c.hora) >= ahora)
+                .sort((a, b) => new Date(a.fecha + 'T' + a.hora) - new Date(b.fecha + 'T' + b.hora));
+
+            const kpiProxima = document.getElementById('kpi-proxima');
+            if (proximas.length > 0) {
+                kpiProxima.innerHTML = `<strong>${proximas[0].nombre}</strong> (${proximas[0].hora})`;
+            } else {
+                kpiProxima.textContent = "Ninguna pendiente";
+            }
+
+            // Filtrado Dinámico
             const searchVal = document.getElementById('search-input').value.toLowerCase();
             const filterFecha = document.getElementById('filter-fecha').value;
             const filterEstado = document.getElementById('filter-estado').value;
@@ -106,8 +139,13 @@
                 return matchSearch && matchFecha && matchEstado && matchServicio && matchTodayOnly;
             });
 
-            // Ordenamiento por Fecha y Hora por defecto
-            filtered.sort((a, b) => new Date(a.fecha + 'T' + a.hora) - new Date(b.fecha + 'T' + b.hora));
+            // Ordenamiento Dinámico (Por Fecha/Hora o por Nombre alfabéticamente)
+            const sortBy = document.getElementById('sort-by').value;
+            if (sortBy === 'nombre') {
+                filtered.sort((a, b) => a.nombre.localeCompare(b.nombre));
+            } else {
+                filtered.sort((a, b) => new Date(a.fecha + 'T' + a.hora) - new Date(b.fecha + 'T' + b.hora));
+            }
 
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
@@ -117,7 +155,6 @@
                 return;
             }
 
-            // ESTRUCTURA DE TABLA REPARADA CON TODAS SUS CELDAS (<td>) CORRECTAS
             filtered.forEach(c => {
                 const tr = document.createElement('tr');
                 tr.className = 'animate-fade';
@@ -152,19 +189,20 @@
             });
         }
 
+        // Funciones de gestión de estado y edición integradas del código base original
         function changeStatus(id, newStatus) {
-            let citas = getCitas();
+            const citas = getCitas();
             const index = citas.findIndex(c => c.id === id);
             if(index !== -1) {
                 citas[index].estado = newStatus;
                 saveCitas(citas);
-                showToast("Estado de la cita actualizado.", "success");
+                showToast("Estado modificado exitosamente.", "success");
                 updateDashboard();
             }
         }
 
         function deleteAppointment(id) {
-            if(confirm("¿Está seguro de que desea eliminar permanentemente esta cita? Esta acción no se puede deshacer.")) {
+            if(confirm("¿Está seguro de que desea eliminar permanentemente esta cita?")) {
                 let citas = getCitas();
                 citas = citas.filter(c => c.id !== id);
                 saveCitas(citas);
@@ -174,18 +212,17 @@
         }
 
         function editAppointment(id) {
-            let citas = getCitas();
+            const citas = getCitas();
             const appointment = citas.find(c => c.id === id);
-            if(appointment) {
+            if (appointment) {
                 const nuevoNombre = prompt("Modificar Nombre Completo:", appointment.nombre);
-                if (nuevoNombre === null) return; 
-                if (nuevoNombre.trim().length < 3) {
-                    showToast("Edición fallida: El nombre debe tener mínimo 3 caracteres.", "error");
+                if (!nuevoNombre || nuevoNombre.trim().length < 3 || !/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nuevoNombre)) {
+                    showToast("Edición fallida: Nombre vacío, muy corto o con caracteres inválidos.", "error");
                     return;
                 }
                 
                 const nuevoTelefono = prompt("Modificar Teléfono:", appointment.telefono);
-                if (!/^\d+$/.test(nuevoTelefono)) {
+                if (!nuevoTelefono || !/^\d+$/.test(nuevoTelefono)) {
                     showToast("Edición fallida: Teléfono inválido.", "error");
                     return;
                 }
@@ -198,13 +235,13 @@
             }
         }
 
-        // Listeners de los filtros en tiempo real
+        // Listeners únicos de los filtros en tiempo real
         document.getElementById('search-input').addEventListener('input', updateDashboard);
         document.getElementById('filter-fecha').addEventListener('change', updateDashboard);
         document.getElementById('filter-estado').addEventListener('change', updateDashboard);
         document.getElementById('filter-servicio').addEventListener('change', updateDashboard);
+        document.getElementById('sort-by').addEventListener('change', updateDashboard);
         
-        // CORREGIDO: Alterna la clase CSS en lugar de forzar estilos fijos en línea
         document.getElementById('btn-hoy-filter').addEventListener('click', function() {
             showOnlyToday = !showOnlyToday;
             this.classList.toggle('btn-active', showOnlyToday);
